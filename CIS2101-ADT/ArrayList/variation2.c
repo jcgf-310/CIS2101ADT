@@ -1,95 +1,155 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-#define size 10
+#define MAX 10
 
-typedef struct {
-    int elem[size];
+typedef struct
+{
+    int elem[MAX];
     int count;
-} List;
+} Etype, *EPtr;
 
-List initialize (List L);
-List insertPos(List L, int data, int position);
-List deletePos(List L, int position);
-int locate(List L, int data);
-List insertSorted(List L, int data);
-void display(List L);
+void initialize(EPtr L);
+void insertPos(EPtr L, int data, int position);
+void deletePos(EPtr L, int position);
+int locate(EPtr L, int data);
+int retrieve(EPtr L, int position);
+void insertSorted(EPtr L, int data);
+void display(EPtr L);
+void makeNULL(EPtr L);
 
-int main() {
-    List L;
-    L.count = 0;
+int main()
+{
+    Etype Lstruct;
+    EPtr L = &Lstruct;
 
-    L = insertPos(L, 2, 0);
-    L = insertPos(L, 7, 1);
-    L = insertPos(L, 3, 1);
+    printf("\n");
+    printf("Initializing list\n");
+    initialize(L);
+
+    printf("\n");
+    printf("Inserting 1 at position 0 (first)\n");
+    insertPos(L, 1, 0);
+    printf("Current list: ");
     display(L);
 
-    L = deletePos(L, 1);
+    printf("\n");
+    printf("Inserting 3 at position %d (last)\n", L->count);
+    insertPos(L, 3, L->count);
+    printf("Current list: ");
     display(L);
 
-    printf("Position of 10: %d\n", locate(L, 10));
-    printf("Position of 7: %d\n", locate(L, 7));
-
-    L = insertSorted(L, 8);
-    L = insertSorted(L, 3);
+    printf("\n");
+    printf("Inserting 2 at position 1\n");
+    insertPos(L, 2, 1);
+    printf("Current list: ");
     display(L);
 
+    printf("\n");
+    printf("Inserting 5 in sorted order\n");
+    insertSorted(L, 5);
+    printf("Current list: ");
+    display(L);
+
+    printf("\n");
+    printf("Deleting element at position 1\n");
+    deletePos(L, 1);
+    printf("Current list: ");
+    display(L);
+
+    printf("\n");
+    printf("Locating 5 in list: %d\n", locate(L, 5));
+
+    printf("\n");
+    printf("Deleting value 1\n");
+    int pos = locate(L, 1);
+    if (pos != -1)
+        deletePos(L, pos);
+    printf("Current list: ");
+    display(L);
+
+    printf("\n");
+    printf("Retrieving element at position 1: %d\n", retrieve(L, 1));
+
+    makeNULL(L);
     return 0;
 }
 
-List initialize (List L){
-
-    L.count = 0;
-    for (int i=0; i<size; i++){
-        L.elem[i] = -1;
-    }
-
-    return L;
+void initialize(EPtr L)
+{
+    L->count = 0;
 }
 
-List insertPos(List L, int data, int position) {
-    if (L.count < size && position >= 0 && position <= L.count) {
-        for (int i = L.count; i > position; i--) {
-            L.elem[i] = L.elem[i - 1];
+void insertPos(EPtr L, int data, int position)
+{
+    if (position <= L->count && L->count < MAX)
+    {
+        for (int i = L->count; i > position; i--)
+        {
+            L->elem[i] = L->elem[i - 1];
         }
-        L.elem[position] = data;
-        L.count++;
+        L->elem[position] = data;
+        L->count++;
     }
-    return L;
 }
 
-List deletePos(List L, int position) {
-    if (position >= 0 && position < L.count) {
-        for (int i = position; i < L.count - 1; i++) {
-            L.elem[i] = L.elem[i + 1];
+void deletePos(EPtr L, int position)
+{
+    if (position < L->count)
+    {
+        for (int i = position; i < L->count - 1; i++)
+        {
+            L->elem[i] = L->elem[i + 1];
         }
-        L.count--;
+        L->count--;
     }
-    return L;
 }
 
-int locate(List L, int data) {
-    for (int i = 0; i < L.count; i++) {
-        if (L.elem[i] == data) {
+int locate(EPtr L, int data)
+{
+    for (int i = 0; i < L->count; i++)
+    {
+        if (L->elem[i] == data)
+        {
             return i;
         }
     }
     return -1;
 }
 
-List insertSorted(List L, int data) {
-    if (L.count < size) {
-        int pos = 0;
-        while (pos < L.count && L.elem[pos] < data) {
-            pos++;
-        }
-        L = insertPos(L, data, pos);
+int retrieve(EPtr L, int position)
+{
+    if (position < L->count)
+    {
+        return L->elem[position];
     }
-    return L;
+    return -1;
 }
 
-void display(List L) {
-    for (int i = 0; i < L.count; i++) {
-        printf("%d ", L.elem[i]);
+void insertSorted(EPtr L, int data)
+{
+    if (L->count < MAX)
+    {
+        int i;
+        for (i = L->count - 1; i >= 0 && L->elem[i] > data; i--)
+        {
+            L->elem[i + 1] = L->elem[i];
+        }
+        L->elem[i + 1] = data;
+        L->count++;
+    }
+}
+
+void display(EPtr L)
+{
+    for (int i = 0; i < L->count; i++)
+    {
+        printf("%d ", L->elem[i]);
     }
     printf("\n");
+}
+
+void makeNULL(EPtr L)
+{
+    L->count = 0;
 }

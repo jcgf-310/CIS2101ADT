@@ -1,54 +1,84 @@
 #include <stdio.h>
 
-#define size 10
+#define MAX 10
 
-typedef struct {
-    int elem[size];
+typedef struct
+{
+    int elem[MAX];
     int count;
 } List;
 
-List initialize (List L);
+List initialize(List L);
 List insertPos(List L, int data, int position);
 List deletePos(List L, int position);
 int locate(List L, int data);
 List insertSorted(List L, int data);
 void display(List L);
 
-int main() {
+int main()
+{
     List L;
-    L.count = 0;
 
-    L = insertPos(L, 2, 0);
-    L = insertPos(L, 7, 1);
-    L = insertPos(L, 3, 1);
+    printf("\n");
+    printf("Initializing list\n");
+    L = initialize(L);
+
+    printf("\n");
+    printf("Inserting 1 at position 0 (first)\n");
+    L = insertPos(L, 1, 0);
+    printf("Current list: ");
     display(L);
 
+    printf("\n");
+    printf("Inserting 3 at position %d (last)\n", L.count);
+    L = insertPos(L, 3, L.count);
+    printf("Current list: ");
+    display(L);
+
+    printf("\n");
+    printf("Inserting 2 at position 1\n");
+    L = insertPos(L, 2, 1);
+    printf("Current list: ");
+    display(L);
+
+    printf("\n");
+    printf("Inserting 5 in sorted order\n");
+    L = insertSorted(L, 5);
+    printf("Current list: ");
+    display(L);
+
+    printf("\n");
+    printf("Deleting element at position 1\n");
     L = deletePos(L, 1);
+    printf("Current list: ");
     display(L);
 
-    printf("Position of 2: %d\n", locate(L, 10));
-    printf("Position of 3: %d\n", locate(L, 7));
+    printf("\n");
+    printf("Locating 5 in list: %d\n", locate(L, 5));
 
-    L = insertSorted(L, 8);
-    L = insertSorted(L, 23);
+    printf("\n");
+    printf("Deleting value 1\n");
+    int pos = locate(L, 1);
+    if (pos != -1)
+        L = deletePos(L, pos);
+    printf("Current list: ");
     display(L);
 
     return 0;
 }
 
-List initialize (List L){
-
+List initialize(List L)
+{
     L.count = 0;
-    for (int i=0; i<size; i++){
-        L.elem[i] = -1;
-    }
-
     return L;
 }
 
-List insertPos(List L, int data, int position) {
-    if (L.count < size && position >= 0 && position <= L.count) {
-        for (int i = L.count; i > position; i--) {
+List insertPos(List L, int data, int position)
+{
+    if (position <= L.count && L.count < MAX)
+    {
+        for (int i = L.count; i > position; i--)
+        {
             L.elem[i] = L.elem[i - 1];
         }
         L.elem[position] = data;
@@ -57,9 +87,12 @@ List insertPos(List L, int data, int position) {
     return L;
 }
 
-List deletePos(List L, int position) {
-    if (position >= 0 && position < L.count) {
-        for (int i = position; i < L.count - 1; i++) {
+List deletePos(List L, int position)
+{
+    if (position < L.count)
+    {
+        for (int i = position; i < L.count - 1; i++)
+        {
             L.elem[i] = L.elem[i + 1];
         }
         L.count--;
@@ -67,28 +100,37 @@ List deletePos(List L, int position) {
     return L;
 }
 
-int locate(List L, int data) {
-    for (int i = 0; i < L.count; i++) {
-        if (L.elem[i] == data) {
+int locate(List L, int data)
+{
+    for (int i = 0; i < L.count; i++)
+    {
+        if (L.elem[i] == data)
+        {
             return i;
         }
     }
     return -1;
 }
 
-List insertSorted(List L, int data) {
-    if (L.count < size) {
-        int pos = 0;
-        while (pos < L.count && L.elem[pos] < data) {
-            pos++;
+List insertSorted(List L, int data)
+{
+    if (L.count < MAX)
+    {
+        int i;
+        for (i = L.count - 1; i >= 0 && L.elem[i] > data; i--)
+        {
+            L.elem[i + 1] = L.elem[i];
         }
-        L = insertPos(L, data, pos);
+        L.elem[i + 1] = data;
+        L.count++;
     }
     return L;
 }
 
-void display(List L) {
-    for (int i = 0; i < L.count; i++) {
+void display(List L)
+{
+    for (int i = 0; i < L.count; i++)
+    {
         printf("%d ", L.elem[i]);
     }
     printf("\n");
